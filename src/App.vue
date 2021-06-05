@@ -1,26 +1,27 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <BubbleSelection />
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import BubbleSelection from "./components/bubbleSelection";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    BubbleSelection,
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+<style >
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Signika Negative", sans-serif;
+  text-transform: capitalize;
+}
+h1 {
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
