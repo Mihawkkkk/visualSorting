@@ -1,12 +1,12 @@
 <template>
-  <BubbleSelection />
+  <BubbleSelectionInsertion />
 </template>
 <script>
-import BubbleSelection from "./components/bubbleSelection";
+import BubbleSelectionInsertion from "./components/BubbleSelectionInsertion.vue";
 export default {
   name: "App",
   components: {
-    BubbleSelection,
+    BubbleSelectionInsertion,
   },
 };
 </script>

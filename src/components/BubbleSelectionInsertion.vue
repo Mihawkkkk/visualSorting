@@ -18,6 +18,9 @@
       <button class="start" v-if="!sorting" @click="selectionSort(lists)">
         selectionSort
       </button>
+      <button class="start" v-if="!sorting" @click="insertionSort(lists)">
+        insertion
+      </button>
     </div>
   </div>
   <h1>mode : {{ mode }}</h1>
@@ -49,15 +52,16 @@ export default {
     return {
       lists: [],
       num_of_div: 100,
-      duration: 0,
-      count: 0,
-      intervalArray: [],
-      sorting: false,
+      duration: 0, // for all sorting algo
+      count: 0, // for bubble sort
+      intervalArray: [], // for clear all settimeout
+      sorting: false, //display button
       mode: "normal",
       type_of_sort: "",
     };
   },
   mounted() {
+    // make the divs first thing
     this.duration = 10;
     this.count = this.duration * this.num_of_div;
     for (let i = 0; i < this.num_of_div; i++) {
@@ -68,6 +72,7 @@ export default {
     }
   },
   methods: {
+    // select mode
     veryslow() {
       this.mode = "verySlow";
       this.duration = 30;
@@ -113,7 +118,23 @@ export default {
       this.intervalArray = [];
     },
     debug() {
-      console.log(this.num_of_div);
+      this.lists.sort();
+    },
+    //helper function
+    swap(arr, x, y) {
+      let temp = arr[x];
+      arr[x] = arr[y];
+      arr[y] = temp;
+    },
+    //for testing and debuging
+    test_the_array(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        let j = i + 1;
+        for (j; j < arr.length; j++) {
+          if (arr[i] > arr[j]) return false;
+        }
+      }
+      return true;
     },
     // start the big algo
     bubblesort(x, ll, minus) {
@@ -144,7 +165,6 @@ export default {
         document.querySelectorAll(".main").forEach((one) => {
           one.classList.add("finish");
         });
-        console.log("fnishs");
 
         return;
       }
@@ -166,21 +186,7 @@ export default {
       );
       this.intervalArray.push(id);
     },
-    // the helper function for good bubble sort
-    test_the_array(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        let j = i + 1;
-        for (j; j < arr.length; j++) {
-          if (arr[i] > arr[j]) return false;
-        }
-      }
-      return true;
-    },
-    swap(arr, x, y) {
-      let temp = arr[x];
-      arr[x] = arr[y];
-      arr[y] = temp;
-    },
+    // start selection sort
     selectionSort(arr) {
       this.type_of_sort = "selectionSort";
       this.sorting = true;
@@ -191,7 +197,6 @@ export default {
         let thiss = this;
         x += this.duration;
         let id = setTimeout(function () {
-          console.log("start");
           let lowest = i;
           for (let j = i + 1; j < arr.length; j++) {
             let idd = setTimeout(function () {
@@ -213,8 +218,6 @@ export default {
             }, j * thiss.duration - i * thiss.duration);
             thiss.intervalArray.push(idd);
             if (i == arr.length - 2) {
-              console.log("hi");
-
               document.querySelectorAll(".main").forEach((one) => {
                 one.classList.add("finish");
               });
@@ -225,7 +228,58 @@ export default {
       }
       return arr;
     },
+    // start inserstion sort
+    insertionSort(arr) {
+      this.type_of_sort = "insertionSort";
+      let thiss = this;
+      this.sorting = true;
+      document.querySelector("input").disabled = true;
+      function recurssion(i) {
+        for (let y = 0; y < i; y++) {
+          if (thiss.$refs[`temp${arr[y]}`] != null) {
+            thiss.$refs[`temp${arr[y]}`].classList.add("active");
+          }
+        }
+        if (i >= arr.length) {
+          setTimeout(function () {
+            this.sorting = false;
+            document.querySelector("input").disabled = false;
+            for (let y = 0; y < i; y++) {
+              if (thiss.$refs[`temp${arr[y]}`] != null) {
+                thiss.$refs[`temp${arr[y]}`].classList.add("finish");
+              }
+            }
+          }, 10);
+          return;
+        }
+        var current = arr[i];
+        for (let j = i - 1; j >= 0; j--) {
+          let id = setTimeout(function () {
+            if (arr[j] > current) {
+              arr[j + 1] = arr[j];
+              if (!(j - 1 >= 0) || !(arr[j - 1] > current)) {
+                arr[j] = current;
+                thiss.intervalArray.forEach((one) => {
+                  clearTimeout(one);
+                });
+                i++;
+                recurssion(i);
+              }
+            } else {
+              thiss.intervalArray.forEach((one) => {
+                clearTimeout(one);
+              });
+              i++;
+              recurssion(i);
+            }
+          }, (i - 1 - j) * thiss.duration);
+          thiss.intervalArray.push(id);
+        }
+      }
+      recurssion(1);
+    },
   },
+  // changing the number of divs
   watch: {
     num_of_div: function () {
       this.num_of_div = Number(this.num_of_div);
@@ -277,7 +331,7 @@ h1 {
 /* start my style */
 
 .header {
-  width: 80%;
+  width: 85%;
   margin: auto;
   height: 50px;
   display: flex;
@@ -323,7 +377,7 @@ h1 {
 }
 .action {
   display: flex;
-  width: 300px;
+  width: 600px;
 }
 .action button {
   width: 150px;
